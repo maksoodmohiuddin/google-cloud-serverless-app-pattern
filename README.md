@@ -2,7 +2,7 @@
 
 This repository contains the source code and configuration files for a Google Cloud Serverless Application Pattern using Cloud Run, API Gateway and Firebase.
 
-The application consists of a frontend developed using Angular, a backend developed using Pyhton Flask, and a Firestore database. The infrastructure is managed using Terraform, and application code/containers build & deployment is managed using Cloud Build.
+The application consists of a frontend developed using Angular, a backend developed using Python Flask, and a Firestore database. The infrastructure is managed using Terraform, and application code/containers build & deployment is managed using Cloud Build.
 
 
 ## Architecture
@@ -11,18 +11,18 @@ The application follows a three-tier architecture, with separate layers for the 
 
 **Frontend**: The frontend is built using Angular, a popular web development framework. It runs on Cloud Run, a fully managed serverless platform on Google Cloud. Cloud Run provides automatic scaling and handles container orchestration.
 
-**Backend**: The backend is developed using Flask, a lightweight Python web framework. It also runs on Cloud Run, allowing for easy scalability and management. The backend handles the business logic of the application and interacts with the Firestore database. Backend is exposed via API gateway, a fully managed gateway for serverless workloads in Google Cloud. U
+**Backend**: The backend is developed using Flask, a lightweight Python web framework. It also runs on Cloud Run, allowing for easy scalability and management. The backend handles the business logic of the application and interacts with the Firestore database. Backend is exposed via API gateway, a fully managed gateway for serverless workloads in Google Cloud. 
 
 **Database**: The application uses Firestore, a NoSQL document database provided by Google Cloud. Firestore offers a flexible data model and automatic scalability. It is used to store and retrieve data required by the application.
 
 ## A note about cost
 
-Benefit of running serverless application is charges are based on usage only and there's no heavy lifting to setup virtual private networks or firewalls. Moreover, google cloud free tier has a generous  offering for the serverless services used in this project:
+Benefit of running a serverless application is charges are based on usage only and there's no heavy lifting to setup virtual private networks or firewalls. Moreover, google cloud free tier has a generous  offering for the serverless services used in this project:
 - Learn more about [Cloud Run Free Tier](https://cloud.google.com/free/docs/free-cloud-features#cloud-run)
 - Learn more about [Cloud Build Free Tier](https://cloud.google.com/free/docs/free-cloud-features#cloud-build)
 - Learn more [Firestore Free Tier](https://cloud.google.com/free/docs/free-cloud-features#firestore)
 
-Only servive that is not part of free tier is API Gateway, however, it allows 0-2 millon API call per account per month free!
+Only service that is not part of free tier is API Gateway, however, it allows up to 2 millon API call per account per month free!
 
 - Learn more about [API Gateway Pricing Free Tier](https://cloud.google.com/api-gateway/pricing)
 
