@@ -10,9 +10,9 @@ import { Employee } from 'src/interfaces/employee.interface';
 export class FirestoreService {
 
 
-  addEmployeeUrl = 'employee-gateway-#.#.gateway.dev/employee';
-  employeesUrl = 'employee-gateway-#.#.gateway.dev/employees';
-  deleteEmployeeUrl = 'employee-gateway-#.#.gateway.dev/employee';
+  addEmployeeUrl = 'https://employee-gateway-#.#.gateway.dev/employee';
+  employeesUrl = 'https://employee-gateway-#.#.gateway.dev/employees';
+  deleteEmployeeUrl = 'https://employee-gateway-#.#.gateway.dev/employee';
 
   constructor(private http: HttpClient) { }
 
