@@ -17,7 +17,7 @@ resource "google_api_gateway_api_config" "api_cfg" {
   openapi_documents {
     document {
       path     = "spec.yaml"
-      contents = base64encode(templatefile("api-gateway--espv2-definition.yml.tmpl", { url = data.google_cloud_run_service.run_service[count.index].status[0].url, project_id = var.project_id }))
+      contents = base64encode(templatefile("api-gateway--espv2-definition.yml.tmpl", { url = data.google_cloud_run_service.backend_run_service[count.index].status[0].url, project_id = var.project_id }))
     }
   }
   gateway_config {
@@ -40,7 +40,7 @@ resource "google_api_gateway_gateway" "api_gw" {
   region     = var.location
 }
 
-data "google_cloud_run_service" "run_service" {
+data "google_cloud_run_service" "backend_run_service" {
   count = var.enable_api_gateway ? 1 : 0
 
   name     = "amazing-employees-backend-service"

@@ -7,7 +7,7 @@ from google.oauth2 import service_account
 app = Flask(__name__)
 CORS(app)
 
-client = firestore.Client(project="PLEASE UPDATE")
+client = firestore.Client(project="PLEASE_UPDATE_PROJECT_ID")
 employees_app_ref = client.collection('employees_app').document('employees')
 employees_ref = employees_app_ref.collection('info')
 
