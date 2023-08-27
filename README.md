@@ -220,9 +220,9 @@ gcloud builds submit  --region=us-west2 --config backend-cloudbuild.yaml
 ```
 Note, cloud build can take several minutes to finish the run, this is expected.
 
-**Step 3 - Update Swagger Spec**
+**Step 3 - Review the Swagger Spec**
 
-We use API Gatewway with Open API Swagger specifications to connect the backend cloud run to API Gateway and setup the API Gateway configuration.
+We use API Gatewway with Open API Swagger specifications to connect the backend cloud run to API Gateway and setup the API Gateway configuration. Review the api-gateway--espv2-definition.yml.tmpl file. 
 
 Note that, firebase is used as authetication for API Gateway.
 
@@ -234,22 +234,6 @@ Learn more about
 
 - Learn more about [Firebase as authetication for API Gateway](https://cloud.google.com/api-gateway/docs/authenticating-users-firebase)
 
-
-Update line 127 & 129 with your google cloud project name
-
-```
-cd ../../infra
-```
-
-```
-nano -l api-gateway--espv2-definition.yml.tmpl
-```
-
-```
-x-google-issuer: "https://securetoken.google.com/PLEASE_UPDATE_PROJECT_ID"
-x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
-x-google-audiences: "PLEASE_UPDATE_PROJECT_ID"
-```
 
 **Step 4 - Deploy API Gateway**
 
@@ -359,6 +343,10 @@ deleteEmployeeUrl = 'https://employee-gateway-#.ue.gateway.dev/employee';
 
 **Step 8 - Trigger Cloud Build to deploy Frontend**
 While in frontend folder, you can review the cloud build file:
+```
+cd ../../..
+```
+
 ```
 cat frontend-cloudbuild.yaml
 ```

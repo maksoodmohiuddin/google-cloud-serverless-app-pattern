@@ -6,8 +6,6 @@ WORKDIR /app
 COPY / ./
 COPY package*.json ./
 
-ENV GATEWAY_URL=$GATEWAY_URL
-
 RUN npm install -g @angular/cli@15.2.4 && \
     npm install && \
     ng build
