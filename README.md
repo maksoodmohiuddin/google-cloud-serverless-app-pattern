@@ -66,10 +66,10 @@ Choose a region that support Cloud Builds, Cloud Run and Firebase and Cloud Buil
 
 For personal account, Cloud Build restricted to limited regions. Therefore, if you are using a personal account, We recommned using one of the below regions:
 
-us-west2
-asia-east1
-australia-southeast1
-southamerica-east1
+us-west2  
+asia-east1  
+australia-southeast1  
+southamerica-east1  
 
 
 ```
@@ -102,7 +102,7 @@ In this section, you will deploy the infrastructure with Terraform.
 
 Due to dependency mapping that is not known to Terraform, we will need to target specific resources and setup the application sequentially.
 
-This application uses Terraform to manage infrastructure. By default, Terraform stores state locally in a file named terraform.tfstate. For purpose of this tutotial, you can use the local state. Howver, if preferred, state can be sttored in a remote state using Google Cloud Storage. Below are the steps for that. Note, this is optional.
+By default, Terraform stores state locally in a file named terraform.tfstate. For purpose of this tutotial, you can use the local state. However, if preferred, state can be stored remotley using Google Cloud Storage. Below are the steps for that. Note, this is optional and you can skip forward to *Instructions* if you wish.
 
 ### [Optional] Configure Terraform with Remote State
 
@@ -142,7 +142,7 @@ provider "google" {
 }
 ```
 
-Note: If you are especially savvy with Terraform, you may find it easier to create the bucket with Terraform local state, then migrate the state into the bucket. See the Google Cloud documentation for more details.
+Note: If you are especially savvy with Terraform, you may find it easier to create the bucket with Terraform local state, then [migrate the state into the bucket](https://developer.hashicorp.com/terraform/language/state/import), or [import the bucket into Terraform state](https://developer.hashicorp.com/terraform/language/state/import) after creation.
 
 Now,  we will continue with the initial infra deployment:
 
@@ -211,7 +211,7 @@ cat backend-cloudbuild.yaml
 
 Use gcloud command line to deploy backend cloud run based on cloud build file:
 ```
-gcloud builds submit  --region=[YOUR GOOGLE CLOUD REGION] --config backend-cloudbuild.yaml
+gcloud builds submit --region=[YOUR GOOGLE CLOUD REGION] --config backend-cloudbuild.yaml
 ```
 
 e.g.
@@ -220,9 +220,9 @@ gcloud builds submit  --region=us-west2 --config backend-cloudbuild.yaml
 ```
 Note, cloud build can take several minutes to finish the run, this is expected.
 
-**Step 3 - Update Swagger Spec**
+**Step 3 - Review the Swagger Spec**
 
-We use API Gatewway with Open API Swagger specifications to connect the backend cloud run to API Gateway and setup the API Gateway configuration.
+We use API Gatewway with Open API Swagger specifications to connect the backend cloud run to API Gateway and setup the API Gateway configuration. Review the file `api-gateway--espv2-definition.yml.tmpl`. 
 
 Note that, firebase is used as authetication for API Gateway.
 
@@ -235,27 +235,12 @@ Learn more about
 - Learn more about [Firebase as authetication for API Gateway](https://cloud.google.com/api-gateway/docs/authenticating-users-firebase)
 
 
-Update line 127 & 129 with your google cloud project name
+**Step 4 - Deploy API Gateway**
+
+First cd back to the infra directory and enable enable_api_gateway flag to true:
 
 ```
 cd ../../infra
-```
-
-```
-nano -l api-gateway--espv2-definition.yml.tmpl
-```
-
-```
-x-google-issuer: "https://securetoken.google.com/PLEASE_UPDATE_PROJECT_ID"
-x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
-x-google-audiences: "PLEASE_UPDATE_PROJECT_ID"
-```
-
-**Step 4 - Deploy API Gateway**
-
-First enable enable_api_gateway flag to true:
-
-```
 nano variables.tf
 ```
 
@@ -360,12 +345,16 @@ deleteEmployeeUrl = 'https://employee-gateway-#.ue.gateway.dev/employee';
 **Step 8 - Trigger Cloud Build to deploy Frontend**
 While in frontend folder, you can review the cloud build file:
 ```
+cd ../../..
+```
+
+```
 cat frontend-cloudbuild.yaml
 ```
 
 Use gcloud command line to deploy backend cloud run based on cloud build file:
 ```
-gcloud builds submit  --region=[YOUR GOOGLE CLOUD REGION]] --config frontend-cloudbuild.yaml
+gcloud builds submit  --region=[YOUR GOOGLE CLOUD REGION] --config frontend-cloudbuild.yaml
 ```
 
 e.g.
@@ -397,7 +386,7 @@ browse to https://console.firebase.google.com/ and select your project:
 
 Click on Authentication -> Settings Tab -> Authorized domains -> Add domain -> paste your Frontend Cloud Run URL.
 
-**Step 10 - Validate end to end appL**
+**Step 10 - Validate end to end application**
 
 Browse to your frontend cloud run URL (https://amazing-employees-frontend-service-###.a.run.app), use a google account to log in to the app - your Google Cloud Serverless Application Pattern using Cloud Run, API Gateway and Firebase is up and running!
 
