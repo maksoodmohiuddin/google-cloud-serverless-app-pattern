@@ -45,11 +45,11 @@ In this section, you will do initial setup.
 **Step 2 - Download the source code for this tutorial**
 
 ```
- git clone https://github.com/maksoodmohiuddin/serverless-cloudrun-apigw-firebase.git
+ git clone https://github.com/maksoodmohiuddin/google-cloud-serverless-app-pattern.git
 ```
 
 ```
-cd serverless-cloudrun-apigw-firebase
+cd google-cloud-serverless-app-pattern
 ```
 
 **Step 3 - Update Terraform to use your Google Project**
@@ -222,7 +222,14 @@ Note, cloud build can take several minutes to finish the run, this is expected.
 
 **Step 3 - Review the Swagger Spec**
 
-We use API Gatewway with Open API Swagger specifications to connect the backend cloud run to API Gateway and setup the API Gateway configuration. Review the file `api-gateway--espv2-definition.yml.tmpl`. 
+We use API Gatewway with Open API Swagger specifications to connect the backend cloud run to API Gateway and setup the API Gateway configuration. Review the file `api-gateway--espv2-definition.yml.tmpl` under infra folder.
+
+First cd back to the infra directory and enable enable_api_gateway flag to true:
+
+```
+cd ../../infra
+cat api-gateway--espv2-definition.yml.tmpl
+``` 
 
 Note that, firebase is used as authetication for API Gateway.
 
@@ -237,10 +244,9 @@ Learn more about
 
 **Step 4 - Deploy API Gateway**
 
-First cd back to the infra directory and enable enable_api_gateway flag to true:
+While still in the infra directory, enable enable_api_gateway flag to true:
 
 ```
-cd ../../infra
 nano variables.tf
 ```
 
@@ -407,6 +413,7 @@ In the Cloud console, go to the [Projects page](https://console.cloud.google.com
 In the project list, select the project you want to delete and click **Delete**.
 In the dialog, type the project ID, and then click **Shut down** to delete the project.
 
+
 ## What's next
 
-Please follow McKinsey Digital in Medium.
+Please follow McKinsey Digital in Medium - https://medium.com/@mckinseydigital
