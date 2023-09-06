@@ -17,6 +17,8 @@ The application follows a three-tier architecture, with separate layers for the 
 
 ## A note about cost
 
+This tutorial is geared towards cloud engineer who like to explore serverless offering from Google Cloud. As such, a typical deployment of the application for noncommercial use should be covered under Google Cloud Free Program. However, please visit Google Cloud Free tier program page to learn more: https://cloud.google.com/free. 
+
 Benefit of running a serverless application is charges are based on usage only and there's no heavy lifting to setup virtual private networks or firewalls. Moreover, google cloud free tier has a generous  offering for the serverless services used in this project:
 - Learn more about [Cloud Run Free Tier](https://cloud.google.com/free/docs/free-cloud-features#cloud-run)
 - Learn more about [Cloud Build Free Tier](https://cloud.google.com/free/docs/free-cloud-features#cloud-build)
@@ -28,6 +30,15 @@ Only service that is not part of free tier is API Gateway, however, it allows up
 
 So, in most cases, you should be able to deploy and run this application with very low to no cost.
 
+Below are the services and the related cost (as of September 2023) we will be using for this tutorial:  
+ 
+- Cloud Run free tier offers monthly 2 million requests, 360,000 GB-seconds of memory, 180,000 vCPU-seconds of compute time and 1 GB network egress (North America Only).   
+- Firestore free tier offers 1 GB storage per project and 50,000 reads / 20,000 writes / 20,000 deletes per day, per project  
+- Cloud Build free tier offers120 build-minutes per day.  
+- Artifact Registry free tier offers 0.5 GB storage per month.
+- API Gateway is not part of free tier offering, however, offer up to 2 million API call per billing account per month free. 
+
+ 
 ## Getting Started
 
 To simplify and centralize, we use this single repository to hold all of the application, infrastructure, and pipeline code.
