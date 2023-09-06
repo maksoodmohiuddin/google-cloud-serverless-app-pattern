@@ -44,33 +44,43 @@ In this section, you will do initial setup.
 
 **Step 2 - Download the source code for this tutorial**
 
+In the cloud shell session, git clone the reference application. You can clone this repo to start, however, we recommend you fork the repo and cloned the forked repo. As part of this step-by-step guide, we will provide instruction on how to change the code to deploy the three-tier serverless application in your google project.  
+
 ```
- git clone https://github.com/maksoodmohiuddin/google-cloud-serverless-app-pattern.git
+git clone [original https://github.com/maksoodmohiuddin/google-cloud-serverless-app-pattern.git or forked repo] 
 ```
 
 ```
 cd google-cloud-serverless-app-pattern
 ```
 
+From here you can select “Open Editor” to launch the Cloud Shell Editor.  
+
 **Step 3 - Update Terraform to use your Google Project**
+Next, let's update project_id and location with google cloud project you are using and a target google cloud region (e.g., us-west4) where you like to deploy this application. Our example shows nano as an editor; however, you can choose to use another available editor that you may prefer to use.  
+
 ```
-nano ./infra/variables.tf
+cd infra 
 ```
-Update project_id and location with google cloud project you are using and a target google cloud region (e.g. us-west4) where you like to deploy this application:
+
+```
+nano variables.tf
+```
+Please choose a region that support Cloud Builds, Cloud Run, Firebase, API Gateway and Artifact Registry. For personal account, Cloud Build restricted to limited regions. Therefore, if you are using a personal account, we recommend using one of the below regions: 
+
+To learn more about Google Cloud Region and supported region for the services for this app, please visit:  
 
 - Learn more about [Google Cloud Region](https://cloud.withgoogle.com/region-picker/).
-Choose a region that support Cloud Builds, Cloud Run and Firebase and Cloud Builds
 - Learn more about [Google Cloud Region that supports Firebase](https://cloud.google.com/firestore/docs/locations).
 - Learn more about [Google Cloud Region that supports Cloud Build](https://cloud.google.com/build/docs/locations).
 - Learn more about [Google Cloud Region that supports Cloud Run](https://cloud.google.com/run/docs/locations).
+- Learn more about [Google Cloud Region that supports API Gateway]((https://cloud.google.com/api-gateway/docs/deployment-model).
 
 For personal account, Cloud Build restricted to limited regions. Therefore, if you are using a personal account, We recommned using one of the below regions:
 
 us-west2  
-asia-east1  
-australia-southeast1  
+asia-east1   
 southamerica-east1  
-
 
 ```
 variable "project_id" {
@@ -98,52 +108,11 @@ gcloud config list
 
 ## Deploying Initial Infrastructure
 
-In this section, you will deploy the infrastructure with Terraform.
-
-Due to dependency mapping that is not known to Terraform, we will need to target specific resources and setup the application sequentially.
-
-By default, Terraform stores state locally in a file named terraform.tfstate. For purpose of this tutotial, you can use the local state. However, if preferred, state can be stored remotley using Google Cloud Storage. Below are the steps for that. Note, this is optional and you can skip forward to *Instructions* if you wish.
-
-### [Optional] Configure Terraform with Remote State
-
-A Cloud Storage bucket Bucket can be used to store the Terraform State.
-
-In the Google Cloud console, navigate to the Cloud Storage Buckets page > Create bucket.
-
-- For **name**, create a globally unique name (e.g., `<random-prefix>-<app-name>-tfstate`)
-- For **location type**, choose **Multi-Region, US**
-- For **storage class**, choose **Standard**.
-- For **access control**, check **Enforce public access prevention** on this bucket and select **Uniform access control**
-- For **data protection**, select **Object versioning**
-
-Alternatively, you can create the bucket using gcloud command:
-
-```
-gcloud storage buckets create gs://BUCKET_NAME
-```
-
-Then, add the backend block to your `providers.tf` file, an example of a `providers.tf` file with remote backend is shown below
-
-```hcl
-terraform {
-  required_providers {
-    google = {
-      source = "hashicorp/google-beta"
-    }
-  }
-  backend "gcs" {
-    bucket = "BUCKET_NAME_HERE"
-  }
-}
-
-provider "google" {
-  project = var.project_id
-  region  = var.location
-}
-```
-
-Note: If you are especially savvy with Terraform, you may find it easier to create the bucket with Terraform local state, then [migrate the state into the bucket](https://developer.hashicorp.com/terraform/language/state/import), or [import the bucket into Terraform state](https://developer.hashicorp.com/terraform/language/state/import) after creation.
-
+n this section, you will deploy the initial infrastructure with Terraform. Due to dependency mapping that is not known to Terraform, we will need to target specific resources and setup the application sequentially. 
+ 
+By default, Terraform stores state locally in a file named terraform.tfstate. For purpose of this tutorial, you can use the local state. However, if preferred, state can be stored in remote state using Google Cloud Storage. Remote state is always preferred for projects with multiple developers. If you are especially savvy with Terraform, you may find it easier to create the bucket with Terraform local state, then migrate the state into the bucket. 
+See the Google Cloud documentation for more details on how to [Setup Remote Terraforn State using Cloud Storage](https://cloud.google.com/docs/terraform/resource-management/store-state)
+ 
 Now,  we will continue with the initial infra deployment:
 
 ### Instructions
@@ -168,6 +137,8 @@ Validate Terraform Plan:
 ```
 terraform plan
 ```
+
+If prompted to authorized cloud shell, please select Accept to continue. This is because Cloud Shell needs permission to use your credentials for the gcloud command and clicking Authorize grant permission to this and future calls. 
 
 Output should be:
 Plan: 18 to add, 0 to change, 0 to destroy.
@@ -218,13 +189,12 @@ e.g.
 ```
 gcloud builds submit  --region=us-west2 --config backend-cloudbuild.yaml
 ```
-Note, cloud build can take several minutes to finish the run, this is expected.
+Note, the Cloud Build run can take several minutes to finish the run, this is expected. This cloud build file builds a docker image for the backend service, pushes it to Artifact Registry, and then deployed the images from the Artifact registry on a Cloud Run instance.  
 
 **Step 3 - Review the Swagger Spec**
 
-We use API Gatewway with Open API Swagger specifications to connect the backend cloud run to API Gateway and setup the API Gateway configuration. Review the file `api-gateway--espv2-definition.yml.tmpl` under infra folder.
-
-First cd back to the infra directory and enable enable_api_gateway flag to true:
+We use API Gatewway with Open API Swagger specifications to connect the backend cloud run to API Gateway and setup the API Gateway configuration. Review the file `api-gateway--espv2-definition.yml.tmpl` under infra folder:  
+First cd back to the infra directory and enable enable_api_gateway flag to true: 
 
 ```
 cd ../../infra
@@ -341,7 +311,7 @@ cd ../employee/services
 nano -l firestore.service.ts
 ```
 
-Update line
+Update the three urls (line 13-15) in `app/frontend/src/employee/services/firestore.service.ts`  (keep the path e.g., employee as is). 
 ```
 addEmployeeUrl = 'https://employee-gateway-#.#.gateway.dev/employee';
 employeesUrl = 'https://employee-gateway-#.#.gateway.dev/employees';
@@ -349,9 +319,10 @@ deleteEmployeeUrl = 'https://employee-gateway-#.ue.gateway.dev/employee';
 ```
 
 **Step 8 - Trigger Cloud Build to deploy Frontend**
-While in frontend folder, you can review the cloud build file:
+Navigate to the frontend folder, review the cloud build file and use the gcloud cli to deploy the backend cloud instance. 
+
 ```
-cd ../../..
+cd ../../.. 
 ```
 
 ```
@@ -384,8 +355,6 @@ gcloud run services describe amazing-employees-frontend-service --region us-west
 ```
 Output should be:
 https://amazing-employees-frontend-service-###.a.run.app
-
-
 
 Copy that URL and to the OAuth redirect domains list in the Firebase:
 browse to https://console.firebase.google.com/ and select your project:
