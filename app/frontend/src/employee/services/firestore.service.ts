@@ -16,8 +16,6 @@ export class FirestoreService {
 
   constructor(private http: HttpClient) { }
 
-  employees: Employee[];
-
   getEmployees(): Observable<Employee[]> {
     return this.http
       .get<Employee[]>(this.employeesUrl);

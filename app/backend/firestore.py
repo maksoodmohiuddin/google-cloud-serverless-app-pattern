@@ -23,13 +23,24 @@ def get_employees():
         # Check if ID was passed to URL query
         employee_id = request.args.get('id')
         if employee_id:
+            # Validate and sanitize the employee ID
+            if not isinstance(employee_id, str):
+                return jsonify({'error': 'Invalid employee ID'}), 400
+            
+            # Sanitize the ID to prevent injection attacks
+            import re
+            if not re.match(r'^[a-zA-Z0-9_-]+$', employee_id):
+                return jsonify({'error': 'Invalid employee ID format'}), 400
+            
             employee = employees_ref.document(employee_id).get()
+            if not employee.exists:
+                return jsonify({'error': 'Employee not found'}), 404
             return jsonify(employee.to_dict()), 200
         else:
             all_employees = [doc.to_dict() for doc in employees_ref.stream()]
             return jsonify(all_employees), 200
     except Exception as e:
-        return f"An Error Occurred: {e}"
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/employee', methods=['POST', 'PUT'])
@@ -38,14 +49,23 @@ def add_update_employee():
     if 'id' not in json_:
         return 'Precondition Failed', 412
 
-    doc_ref = employees_ref.document(u'{}'.format(json_.get('id')))
+    # Validate and sanitize the employee ID
+    employee_id = json_.get('id')
+    if not employee_id or not isinstance(employee_id, str):
+        return 'Invalid employee ID', 400
+    
+    # Sanitize the ID to prevent injection attacks
+    import re
+    if not re.match(r'^[a-zA-Z0-9_-]+$', employee_id):
+        return 'Invalid employee ID format', 400
+
+    doc_ref = employees_ref.document(employee_id)
     try:
         doc_ref.set(json_)
         response = 'Employee Added or Updated'
         return jsonify(response), 201
-    except (RuntimeError, TypeError, NameError):
-        print(RuntimeError);
-        return 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/employeesecure', methods=['POST', 'PUT'])
@@ -54,25 +74,46 @@ def add_update_employee_secure():
     if 'id' not in json_:
         return 'Precondition Failed', 412
 
-    doc_ref = employees_ref.document(u'{}'.format(json_.get('id')))
-    doc_ref.set(json_)
-    response = 'Employee Added or Updated'
-    return jsonify(response), 201
+    # Validate and sanitize the employee ID
+    employee_id = json_.get('id')
+    if not employee_id or not isinstance(employee_id, str):
+        return 'Invalid employee ID', 400
+    
+    # Sanitize the ID to prevent injection attacks
+    import re
+    if not re.match(r'^[a-zA-Z0-9_-]+$', employee_id):
+        return 'Invalid employee ID format', 400
+
+    try:
+        doc_ref = employees_ref.document(employee_id)
+        doc_ref.set(json_)
+        response = 'Employee Added or Updated'
+        return jsonify(response), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 @app.route('/employee', methods=['DELETE'])
 def delete_employee():
     employee_id = request.args.get('id')
-    if employee_id:
-        try:
-            employee = employees_ref.document(employee_id).delete()
-            response = 'Employee Deleted!'
-            return jsonify(response), 201
-        except (RuntimeError, TypeError, NameError):
-            print(RuntimeError);
-            return 500
-    else:
+    if not employee_id:
         return 'Precondition Failed', 412
+    
+    # Validate and sanitize the employee ID
+    if not isinstance(employee_id, str):
+        return 'Invalid employee ID', 400
+    
+    # Sanitize the ID to prevent injection attacks
+    import re
+    if not re.match(r'^[a-zA-Z0-9_-]+$', employee_id):
+        return 'Invalid employee ID format', 400
+    
+    try:
+        employees_ref.document(employee_id).delete()
+        response = 'Employee Deleted!'
+        return jsonify(response), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 
 if __name__ == '__main__':
