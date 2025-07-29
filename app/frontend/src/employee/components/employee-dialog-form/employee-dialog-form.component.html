@@ -1,4 +1,4 @@
-<title mat-dialog-title>Add Employee</title>
+<title mat-dialog-title>{{ data.currentEmployee ? 'Edit Employee' : 'Add Employee' }}</title>
 
 <form [formGroup]="form">
   <mat-dialog-content>
@@ -6,23 +6,28 @@
       <mat-form-field>
         <input
           matInput
-          placeholder="First Name"
+          placeholder="First Name *"
           formControlName="firstName"
-          type="text">
+          type="text"
+          required>
+        <mat-error *ngIf="firstNameErrors">{{ firstNameErrors }}</mat-error>
       </mat-form-field>
 
       <mat-form-field>
         <input
           matInput
-          placeholder="Last Name"
+          placeholder="Last Name *"
           formControlName="lastName"
-          type="text">
+          type="text"
+          required>
+        <mat-error *ngIf="lastNameErrors">{{ lastNameErrors }}</mat-error>
       </mat-form-field>
 
       <mat-form-field>
-        <mat-select placeholder="Job Title" formControlName="jobTitle">
+        <mat-select placeholder="Job Title *" formControlName="jobTitle" required>
           <mat-option *ngFor="let jobTitle of jobTitles" [value]="jobTitle">{{ jobTitle }}</mat-option>
         </mat-select>
+        <mat-error *ngIf="jobTitleErrors">{{ jobTitleErrors }}</mat-error>
       </mat-form-field>
 
       <mat-form-field>
@@ -30,7 +35,10 @@
           matInput
           placeholder="Years of Experience"
           formControlName="yearsExperience"
-          type="number">
+          type="number"
+          min="0"
+          [max]="MAX_YEARS_EXPERIENCE">
+        <mat-error *ngIf="yearsExperienceErrors">{{ yearsExperienceErrors }}</mat-error>
       </mat-form-field>
 
       <mat-form-field>
@@ -38,7 +46,9 @@
           matInput
           placeholder="City"
           formControlName="city"
-          type="text">
+          type="text"
+          [maxlength]="MAX_STRING_LENGTH">
+        <mat-error *ngIf="cityErrors">{{ cityErrors }}</mat-error>
       </mat-form-field>
 
       <mat-form-field>
@@ -46,7 +56,9 @@
           matInput
           placeholder="Street"
           formControlName="street"
-          type="text">
+          type="text"
+          [maxlength]="MAX_STRING_LENGTH">
+        <mat-error *ngIf="streetErrors">{{ streetErrors }}</mat-error>
       </mat-form-field>
 
       <mat-form-field>
@@ -54,7 +66,9 @@
           matInput
           placeholder="Avatar URL"
           formControlName="avatarURL"
-          type="text">
+          type="url"
+          [maxlength]="MAX_STRING_LENGTH">
+        <mat-error *ngIf="avatarUrlErrors">{{ avatarUrlErrors }}</mat-error>
       </mat-form-field>
 
       <mat-form-field>
@@ -62,16 +76,29 @@
           matInput
           placeholder="Image URL"
           formControlName="imageURL"
-          type="text">
+          type="url"
+          [maxlength]="MAX_STRING_LENGTH">
+        <mat-error *ngIf="imageUrlErrors">{{ imageUrlErrors }}</mat-error>
       </mat-form-field>
 
-
     </div>
+    
+    <!-- Form validation summary -->
+    <div *ngIf="form.invalid && form.touched" class="validation-summary">
+      <mat-icon color="warn">warning</mat-icon>
+      <span>Please fix the errors above before submitting.</span>
+    </div>
+    
   </mat-dialog-content>
 
   <mat-dialog-actions>
     <button mat-button mat-dialog-close>Cancel</button>
-    <!-- The mat-dialog-close directive optionally accepts a value as a result for the dialog. -->
-    <button mat-raised-button [mat-dialog-close]=form.value color="primary">Save</button>
+    <button 
+      mat-raised-button 
+      [mat-dialog-close]="canSubmit() ? getSanitizedFormData() : null" 
+      [disabled]="!canSubmit()"
+      color="primary">
+      {{ data.currentEmployee ? 'Update' : 'Save' }}
+    </button>
   </mat-dialog-actions>
 </form>
