@@ -1,5 +1,3 @@
-// WARNING: DO NOT UPLOAD THIS FILE TO REMOTE REPO WITH API KEY 
-// AND OTHER SENSITIVE INFORMATION, ONLY SAVE IT LOCALLY 
 export const environment = {
   firebase: {
      apiKey: process.env['FIREBASE_API_KEY'] || "your-api-key",
@@ -10,6 +8,5 @@ export const environment = {
      appId: process.env['FIREBASE_APP_ID'] || "your-app-id",
      measurementId: process.env['FIREBASE_MEASUREMENT_ID'] || "your-measurement-id"
   },
-  production: false
+  production: true
 };
-
